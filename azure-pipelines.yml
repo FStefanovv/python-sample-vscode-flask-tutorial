@@ -3,15 +3,15 @@ trigger:
 
 variables:
   # Azure Service Principal credentials
-- group: 'acr-sp-push'
+  - group: 'acr-sp-push'
 
   # Docker/ACR info
-- name: ACR_NAME
-  value: 'fstefanovacrlearning'
-- name: IMAGE_NAME
-  value: 'fstefanovvpythonsamplevscodeflasktutorial'
-- name: TAG
-  value: '$(Build.BuildId)'
+  - name: ACR_NAME
+    value: 'fstefanovacrlearning'
+  - name: IMAGE_NAME
+    value: 'fstefanovvpythonsamplevscodeflasktutorial'
+  - name: TAG
+    value: '$(Build.BuildId)'
 
 stages:
 - stage: BuildAndPush
@@ -29,16 +29,12 @@ stages:
       inputs:
         dockerVersion: '20.10.24'
 
-    # Login to Azure using Service Principal
-    - task: AzureCLI@2
+    # Login to Azure using Service Principal (plain script)
+    - script: |
+        echo "Logging in with service principal"
+        az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+        az account set --subscription $AZURE_SUBSCRIPTION_ID
       displayName: 'Login to Azure using Service Principal'
-      inputs:
-        scriptType: bash
-        scriptLocation: inlineScript
-        inlineScript: |
-          echo "Logging in with service principal"
-          az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
-          az account set --subscription $AZURE_SUBSCRIPTION_ID
 
     # Login to ACR using the SP
     - script: |
@@ -55,4 +51,3 @@ stages:
     - script: |
         docker push $(ACR_NAME).azurecr.io/$(IMAGE_NAME):$(TAG)
       displayName: 'Push Docker Image'
-
