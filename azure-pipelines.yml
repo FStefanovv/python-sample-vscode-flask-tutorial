@@ -22,6 +22,11 @@ stages:
     pool:
       name: 'Default'  # your self-hosted agent pool
     steps:
+    - script: |
+        echo "Configuring Azure CLI timeouts"
+        az config set core.http_timeout=300
+        az config set core.request_timeout=300
+      displayName: 'Configure Azure CLI Timeouts'
     # Login to Azure using Service Principal (plain script)
     - script: |
         echo "Logging in with service principal"
