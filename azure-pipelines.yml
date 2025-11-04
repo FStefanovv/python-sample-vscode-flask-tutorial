@@ -1,40 +1,58 @@
-# Docker
-# Build and push an image to Azure Container Registry
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-
 trigger:
 - main
 
-resources:
-- repo: self
-
 variables:
-  # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '1a6de8bc-e0c4-43a8-aac5-8667c406583d'
-  imageRepository: 'fstefanovvpythonsamplevscodeflasktutorial'
-  containerRegistry: 'fstefanovacrlearning.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
-  tag: '$(Build.BuildId)'
-  selfHostedPool: 'Default' 
+  # Azure Service Principal credentials
+- group: 'acr-sp-push'
+
+  # Docker/ACR info
+- name: ACR_NAME
+  value: 'fstefanovacrlearning'
+- name: IMAGE_NAME
+  value: 'fstefanovvpythonsamplevscodeflasktutorial'
+- name: TAG
+  value: '$(Build.BuildId)'
 
 stages:
-- stage: Build
-  displayName: Build and push stage
+- stage: BuildAndPush
+  displayName: Build and Push Docker Image
   jobs:
   - job: Build
-    displayName: Build
+    displayName: Build Job
     pool:
-      name: $(selfHostedPool)
+      name: 'Default'  # your self-hosted agent pool
     steps:
+
+    # Install Docker if needed
     - task: DockerInstaller@0
+      displayName: Install Docker
       inputs:
-        dockerVersion: '17.09.0-ce'
-    - task: Docker@2
-      displayName: Build and push an image to container registry
+        dockerVersion: '20.10.24'
+
+    # Login to Azure using Service Principal
+    - task: AzureCLI@2
+      displayName: 'Login to Azure using Service Principal'
       inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: |
-          $(tag)
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          echo "Logging in with service principal"
+          az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+          az account set --subscription $AZURE_SUBSCRIPTION_ID
+
+    # Login to ACR using the SP
+    - script: |
+        echo "Logging in to ACR"
+        az acr login --name $(ACR_NAME)
+      displayName: 'Login to ACR'
+
+    # Build Docker image
+    - script: |
+        docker build -t $(ACR_NAME).azurecr.io/$(IMAGE_NAME):$(TAG) .
+      displayName: 'Build Docker Image'
+
+    # Push Docker image
+    - script: |
+        docker push $(ACR_NAME).azurecr.io/$(IMAGE_NAME):$(TAG)
+      displayName: 'Push Docker Image'
+
