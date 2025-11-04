@@ -24,8 +24,8 @@ stages:
     steps:
     - script: |
         echo "Configuring Azure CLI timeouts"
-        az config set core.http_timeout=300
-        az config set core.request_timeout=300
+        az config set core.http_timeout=600
+        az config set core.request_timeout=600
       displayName: 'Configure Azure CLI Timeouts'
     # Login to Azure using Service Principal (plain script)
     - script: |
@@ -47,7 +47,5 @@ stages:
 
     # Push Docker image
     - script: |
-        export DOCKER_CLIENT_TIMEOUT=300
-        export COMPOSE_HTTP_TIMEOUT=300
         docker push $(ACR_NAME).azurecr.io/$(IMAGE_NAME):$(TAG)
       displayName: 'Push Docker Image'
