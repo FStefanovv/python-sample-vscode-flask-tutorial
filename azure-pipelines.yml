@@ -10,7 +10,7 @@ resources:
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: 'abbb9a99-cbdd-4d7d-9ab5-45348222bc3e'
+  dockerRegistryServiceConnection: '1a6de8bc-e0c4-43a8-aac5-8667c406583d'
   imageRepository: 'fstefanovvpythonsamplevscodeflasktutorial'
   containerRegistry: 'fstefanovacrlearning.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
