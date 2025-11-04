@@ -22,13 +22,6 @@ stages:
     pool:
       name: 'Default'  # your self-hosted agent pool
     steps:
-
-    # Install Docker if needed
-    - task: DockerInstaller@0
-      displayName: Install Docker
-      inputs:
-        dockerVersion: '20.10.24'
-
     # Login to Azure using Service Principal (plain script)
     - script: |
         echo "Logging in with service principal"
@@ -49,5 +42,7 @@ stages:
 
     # Push Docker image
     - script: |
+        export DOCKER_CLIENT_TIMEOUT=300
+        export COMPOSE_HTTP_TIMEOUT=300
         docker push $(ACR_NAME).azurecr.io/$(IMAGE_NAME):$(TAG)
       displayName: 'Push Docker Image'
