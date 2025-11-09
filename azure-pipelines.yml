@@ -10,8 +10,6 @@ variables:
     value: 'fstefanovacrlearning'
   - name: IMAGE_NAME
     value: 'fstefanovvpythonsamplevscodeflasktutorial'
-  - name: TAG
-    value: '$(Build.SourceVersion:~0,7)'
 
 stages:
 - stage: BuildAndPush
@@ -42,10 +40,10 @@ stages:
 
     # Build Docker image
     - script: |
-        docker build -t $(ACR_NAME).azurecr.io/$(IMAGE_NAME):$(TAG) .
+        docker build -t $(ACR_NAME).azurecr.io/$(IMAGE_NAME):${BUILD_SOURCEVERSION:0:7} .
       displayName: 'Build Docker Image'
 
     # Push Docker image
     - script: |
-        docker push $(ACR_NAME).azurecr.io/$(IMAGE_NAME):$(TAG)
+        docker push $(ACR_NAME).azurecr.io/$(IMAGE_NAME):${BUILD_SOURCEVERSION:0:7}
       displayName: 'Push Docker Image'
