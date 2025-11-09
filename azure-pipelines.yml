@@ -11,7 +11,7 @@ variables:
   - name: IMAGE_NAME
     value: 'fstefanovvpythonsamplevscodeflasktutorial'
   - name: TAG
-    value: '$(Build.BuildId)'
+    value: '$(Build.SourceVersion:~0,7)'
 
 stages:
 - stage: BuildAndPush
@@ -20,7 +20,7 @@ stages:
   - job: Build
     displayName: Build Job
     pool:
-      name: 'Default'  # your self-hosted agent pool
+      name: 'Azure Pipelines'
     steps:
     - script: |
         echo "Configuring Azure CLI timeouts"
