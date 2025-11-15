@@ -12,7 +12,8 @@ trigger:
     - hello_app/**
     - requirements.txt
     - startup.py
-    
+    - azure-pipelines-1.yml
+
 
 pool:
   name: "$(MSFT_AGENT_POOL)"
