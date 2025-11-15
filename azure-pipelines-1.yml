@@ -12,6 +12,7 @@ trigger:
     - hello_app/**
     - requirements.txt
     - startup.py
+    
 
 pool:
   name: "$(MSFT_AGENT_POOL)"
