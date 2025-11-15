@@ -4,16 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
 trigger:
-  branches:
-    include:
-    - main
-  paths:
-    include:
-    - hello_app/**
-    - requirements.txt
-    - startup.py
-    - azure-pipelines-1.yml
-
+- main
 
 pool:
   name: "$(MSFT_AGENT_POOL)"
