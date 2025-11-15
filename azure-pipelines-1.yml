@@ -6,6 +6,7 @@
 trigger:
 - main
 
+
 pool:
   name: "$(MSFT_AGENT_POOL)"
 
