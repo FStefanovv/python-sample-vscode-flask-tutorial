@@ -65,7 +65,9 @@ stages:
       inputs:
         versionSpec: $(pythonVersion)
 
-    - script: pip install -r requirements.txt
+    - script: |
+        pip install -r requirements.txt
+        pip install pytest pytest-cov
       displayName: "Install dependencies"
 
     - script: |
@@ -98,7 +100,7 @@ stages:
 
 - stage: Deploy
   displayName: 'Deploy Web App'
-  dependsOn: Build
+  dependsOn: Test
   condition: succeeded()
   jobs:
   - deployment: DeploymentJob
