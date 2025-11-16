@@ -10,6 +10,7 @@ steps:
 - task: UsePythonVersion@0
   inputs:
     versionSpec: ${{ parameters.pythonVersion }}
+  displayName: "Use python version"
 
 - script: |
     python -m pip install --upgrade pip

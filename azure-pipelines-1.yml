@@ -37,7 +37,6 @@ stages:
       parameters:
         codePath: 'hello_app'
         pythonVersion: $(pythonVersion)
-      displayName: 'Build checks - linting and static code analysis'
 
     - task: ArchiveFiles@2
       displayName: 'Archive files'
