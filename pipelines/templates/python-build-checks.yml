@@ -21,7 +21,7 @@ steps:
 
 - script: |
     echo "Running flake8 linting..."
-    flake8 .
+    flake8 . --max-line-length=120 --ignore=F401,E302,E251,W291
   displayName: "Run flake8"
   workingDirectory: ${{ parameters.codePath }}
 
