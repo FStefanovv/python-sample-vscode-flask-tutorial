@@ -1,0 +1,31 @@
+parameters:
+- name: pythonVersion
+  default: '3.12'
+- name: codePath
+  default: 'src'
+- name: repoRoot
+  default: '.'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: ${{ parameters.pythonVersion }}
+
+- script: |
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
+    pip install flake8 pylint pytest
+  displayName: "Install dependencies + tools"
+  workingDirectory: ${{ parameters.repoRoot }}
+
+- script: |
+    echo "Running flake8 linting..."
+    flake8 .
+  displayName: "Run flake8"
+  workingDirectory: ${{ parameters.codePath }}
+
+- script: |
+    echo "Running pylint..."
+    pylint **/*.py --exit-zero
+  displayName: "Run pylint"
+  workingDirectory: ${{ parameters.codePath }}

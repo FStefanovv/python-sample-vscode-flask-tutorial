@@ -1,7 +1,5 @@
 trigger: none
 
-
-
 variables:
   # Azure Service Principal credentials
   - group: 'acr-sp-push'
