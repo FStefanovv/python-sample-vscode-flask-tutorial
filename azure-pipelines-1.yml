@@ -51,6 +51,51 @@ stages:
       displayName: 'Upload package'
       artifact: drop
 
+- stage: Test
+  displayName: "Test Stage"
+  dependsOn: Build
+  condition: succeeded()
+
+  jobs:
+  - job: RunTests
+    displayName: "Execute unit tests"
+
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: $(pythonVersion)
+
+    - script: pip install -r requirements.txt
+      displayName: "Install dependencies"
+
+    - script: |
+        pytest hello_app \
+          --junitxml=test-results.xml \
+          --cov=hello_app \
+          --cov-report=xml \
+          --cov-report=html
+      displayName: "Run pytest with coverage"
+
+    - script: coverage report --fail-under=90
+      displayName: "Require at least 90% coverage"
+
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFiles: 'test-results.xml'
+        testResultsFormat: 'JUnit'
+        failTaskOnFailedTests: true
+      displayName: "Publish test results"
+
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: 'coverage.xml'
+        reportDirectory: 'htmlcov'
+      displayName: "Publish code coverage"
+
+
+
+
 - stage: Deploy
   displayName: 'Deploy Web App'
   dependsOn: Build
