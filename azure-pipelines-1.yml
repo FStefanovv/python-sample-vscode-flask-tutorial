@@ -71,7 +71,7 @@ stages:
       displayName: "Install dependencies"
 
     - script: |
-        pytest . \
+        python -m pytest hello_app/tests \
           --junitxml=test-results.xml \
           --cov=hello_app \
           --cov-report=xml \
