@@ -88,13 +88,11 @@ stages:
         failTaskOnFailedTests: true
       displayName: "Publish test results"
 
-    - task: PublishCodeCoverageResults@1
+    - task: PublishCodeCoverageResults@2
       inputs:
-        codeCoverageTool: Cobertura
         summaryFileLocation: 'coverage.xml'
-        reportDirectory: 'htmlcov'
+        pathToSources: '$(Build.SourcesDirectory)'
       displayName: "Publish code coverage"
-
 
 
 
