@@ -94,8 +94,6 @@ stages:
         pathToSources: '$(Build.SourcesDirectory)'
       displayName: "Publish code coverage"
 
-
-
 - stage: Deploy
   displayName: 'Deploy Web App'
   dependsOn: Test

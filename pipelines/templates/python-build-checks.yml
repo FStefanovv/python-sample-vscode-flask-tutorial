@@ -15,7 +15,7 @@ steps:
 - script: |
     python -m pip install --upgrade pip
     pip install -r requirements.txt
-    pip install flake8 pylint pytest
+    pip install flake8 pylint pytest mypy bandit pip-audit
   displayName: "Install dependencies + tools"
   workingDirectory: ${{ parameters.repoRoot }}
 
@@ -30,3 +30,15 @@ steps:
     pylint **/*.py --exit-zero
   displayName: "Run pylint"
   workingDirectory: ${{ parameters.codePath }}
+
+- script: |
+    mypy ${{ parameters.codePath }}
+  displayName: "Run mypy type checks"
+
+- script: |
+    bandit -r ${{ parameters.codePath }}
+  displayName: "Security scan (Bandit)"
+
+- script: |
+    pip-audit || true
+  displayName: "Dependency vulnerability scan (pip-audit)"
