@@ -1,0 +1,39 @@
+parameters:
+  - name: coveragePath
+    default: 'src'
+  - name: coverageFailPercentage
+    default: 90
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: $(pythonVersion)
+
+- script: |
+    pip install -r requirements.txt
+    pip install pytest pytest-cov
+  displayName: "Install dependencies"
+
+- script: |
+    pytest . \
+      --junitxml=test-results.xml \
+      --cov=${{ parameters.coveragePath  }} \
+      --cov-report=xml \
+      --cov-report=html
+  displayName: "Run pytest with coverage"
+
+- script: coverage report --fail-under=${{ parameters.coverageFailPercentage }}
+  displayName: "Fail if test coverage below threshold"
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFiles: 'test-results.xml'
+    testResultsFormat: 'JUnit'
+    failTaskOnFailedTests: true
+  displayName: "Publish test results"
+
+- task: PublishCodeCoverageResults@2
+  inputs:
+    summaryFileLocation: 'coverage.xml'
+    pathToSources: '$(Build.SourcesDirectory)'
+  displayName: "Publish code coverage"
