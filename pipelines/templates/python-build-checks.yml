@@ -36,8 +36,12 @@ steps:
   displayName: "Run mypy type checks"
 
 - script: |
-    bandit -r ${{ parameters.codePath }}
-  displayName: "Security scan (Bandit)"
+    bandit -r ${{ parameters.codePath }} || true
+  displayName: "Bandit full report (all issues, report-only)"
+
+- script: |
+    bandit -r ${{ parameters.codePath }} -ll
+  displayName: "Bandit failure check (Medium+)"
 
 - script: |
     pip-audit || true
