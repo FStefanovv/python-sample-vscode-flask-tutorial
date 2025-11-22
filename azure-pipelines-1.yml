@@ -51,48 +51,19 @@ stages:
       displayName: 'Upload package'
       artifact: drop
 
+      
 - stage: Test
   displayName: "Test Stage"
   dependsOn: Build
   condition: succeeded()
-
   jobs:
   - job: RunTests
-    displayName: "Execute unit tests"
+    displayName: "Unit test"
+    steps: 
+    - template: pipelines/templates/python-unit-tests.yml
+      parameters:
+        coveragePath: 'hello_app'
 
-    steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: $(pythonVersion)
-
-    - script: |
-        pip install -r requirements.txt
-        pip install pytest pytest-cov
-      displayName: "Install dependencies"
-
-    - script: |
-        python -m pytest hello_app/tests \
-          --junitxml=test-results.xml \
-          --cov=hello_app \
-          --cov-report=xml \
-          --cov-report=html
-      displayName: "Run pytest with coverage"
-
-    - script: coverage report --fail-under=90
-      displayName: "Require at least 90% coverage"
-
-    - task: PublishTestResults@2
-      inputs:
-        testResultsFiles: 'test-results.xml'
-        testResultsFormat: 'JUnit'
-        failTaskOnFailedTests: true
-      displayName: "Publish test results"
-
-    - task: PublishCodeCoverageResults@2
-      inputs:
-        summaryFileLocation: 'coverage.xml'
-        pathToSources: '$(Build.SourcesDirectory)'
-      displayName: "Publish code coverage"
 
 - stage: Deploy
   displayName: 'Deploy Web App'
